@@ -21,6 +21,7 @@ Each options contains subtopics. For exampe, if user picks 'employees', a table 
 ## Credits
 
 GitHub Username: justjulieta
+
 GitHub: https://github.com/justjulieta/Employee-Tracker
 
 ## License
