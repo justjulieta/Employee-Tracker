@@ -56,3 +56,4 @@ const db = mysql.createConnection(
         quit();
     }})
 };
+
