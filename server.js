@@ -83,3 +83,66 @@ function startSearch() {
         process.exit(1);
       });
 }
+
+function viewEmployees() {
+    db.allEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            console.log("\n");
+            console.table(employees);
+        })
+        .then(() => startSearch());
+}
+
+function viewRoles() {
+    db.allRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            console.log("\n");
+            console.table(roles);
+        })
+        .then(() => startSearch());
+}
+
+function viewDepartments() {
+    db.allDepartments()
+        .then(([rows]) => {
+            let departments = rows;
+            console.log("\n");
+            console.table(departments);
+        })
+        .then(() => startSearch());
+}
+
+function createRole() {
+    db.allDepartments()
+        .then(([rows]) => {
+            let departments = rows;
+            const departmentChoices = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }));
+
+            inquirer.prompt([
+                {
+                    name: "role",
+                    message: "What's the role name?"
+                },
+                {
+                    name: "salary",
+                    message: "What's the salary?"
+                },
+                {
+                    name: "department_id",
+                    type: "list",
+                    message: "Please list the department",
+                    choices: departmentChoices
+                }
+            ])
+                .then(role => {
+                    db.addRole(role)
+                        .then(() => console.log(`Added ${role.title} to the database`))
+                        .then(() => startSearch())
+                })
+        })
+    }
