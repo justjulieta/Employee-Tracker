@@ -1,59 +1,85 @@
-const express = require ('express');
-const inquirer = require ('inquirer');
-const mysql = require ('mysql2');
+const inquirer = require('inquirer');
+const db = require("./db");
+require("console.table");
 
-const PORT = process.env.PORT || 3001;
-const app = express ();
+function init() {
+    startSearch();
+}
 
-app.use(express.urlencoded({extended: false}));
-app.use (express.json());
+function startSearch() {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Choose an option below",
+            name: "choice",
+            choices: [
+                {
+                    name: "Departments",
+                    value: "VIEW_DEPARTMENTS"
+                },
+                {
+                    name: "Roles",
+                    value: "VIEW_ROLES"
+                },
+                {
+                    name: "Employees",
+                    value: "VIEW_EMPLOYEES"
+                },
 
-// Connect to database
-const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    user: 'root',
-    password: 'MyNewPassword',
-    database: 'employee_db'
-  },
-  console.log ('Connected to employee database.')
-  );
+                {
+                    name: "Department Add",
+                    value: "ADD_DEPARTMENT"
+                },
+                {
+                    name: "Role Add",
+                    value: "ADD_ROLE"
+                },
+                {
+                    name: "Employee Add",
+                    value: "ADD_EMPLOYEE"
+                },
+                {
+                    name: "Employee Update",
+                    value: "UPDATE_EMPLOYEE_ROLE"
+                },
+                {
+                    name: "Quit",
+                    value: "QUIT"
+                }
+            ]
+        }
 
-  function startForm() {
-    inquirer.prompt ([
-        { 
-        type: 'list',
-        name: 'choice',
-        message: 'Menu',
-        Choices: [
-        'View All Departments',
-        'Add Department',
-        'View All Roles',
-        'Add Role',
-        'View All Employees',
-        'Add employee',
-        'Update Employee Role',
-        'Exit'
-        ]}
-    ])
-
-.then(answers => {
-    if (answers.choice == 'View All Departments'){
-        viewAllEmployees();
-    } else if (answers.choice == 'Add Department'){
-        addDepartment();
-    } else if (answers.choice == 'View All Roles'){
-        viewAllRoles();
-    } else if (answers.choice == 'Add Role'){
-        addRole();
-    } else if (answers.choice == 'View All Employees'){
-        viewAllEmployees();
-    } else if (answers.choice == 'Add Employee'){
-        addEmployee();
-    } else if (answers.choice == 'Update Employee Role'){
-        updateEmployeeRole();
-    } else{
-        quit();
-    }})
-};
-
+    ]).then(res => {
+        let choice = res.choice;
+        switch (choice) {
+            case "VIEW_DEPARTMENTS":
+                viewDepartments();
+                break;
+            case "VIEW_ROLES":
+                viewRoles();
+                break;
+            case "VIEW_EMPLOYEES":
+                viewEmployees();
+                break;
+            case "ADD_DEPARTMENT":
+                createDepartment();
+                break;
+            case "ADD_ROLE":
+                createRole();
+                break;
+            case "ADD_EMPLOYEE":
+                createEmployee();
+                break;
+            case "UPDATE_EMPLOYEE_ROLE":
+                updateEmployeeRole();
+                break;
+            default:
+                quit();
+        }
+    }
+    )
+    .catch(error => {
+        console.error(error);
+        process.exit(1);
+      });
+}
