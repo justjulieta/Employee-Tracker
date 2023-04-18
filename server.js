@@ -126,7 +126,7 @@ function createRole() {
             inquirer.prompt([
                 {
                     name: "role",
-                    message: "What's the role name?"
+                    message: "What's the role's name?"
                 },
                 {
                     name: "salary",
@@ -135,7 +135,7 @@ function createRole() {
                 {
                     name: "department_id",
                     type: "list",
-                    message: "Please list the department",
+                    message: "Please list the department name",
                     choices: departmentChoices
                 }
             ])
@@ -144,5 +144,88 @@ function createRole() {
                         .then(() => console.log(`Added ${role.title} to the database`))
                         .then(() => startSearch())
                 })
+     })
+}
+
+function createDepartment() {
+    inquirer.prompt([
+        {
+            name: "name",
+            message: "Please list the department name"
+        }
+    ])
+        .then(res => {
+            let name = res;
+            db.addDepartment(name)
+                .then(() => console.log(`Added ${name.name} to the database`))
+                .then(() => startSearch())
         })
-    }
+}
+
+function createEmployee() {
+    inquirer.prompt([
+        {
+            name: "first_name",
+            message: "What's the employee's first name?"
+        },
+        {
+            name: "last_name",
+            message: "What's the employee's last name?"
+        }
+    ])
+        .then(res => {
+            let firstName = res.first_name;
+            let lastName = res.last_name;
+
+            db.allRoles()
+                .then(([rows]) => {
+                    let roles = rows;
+                    const roleChoices = roles.map(({ id, title }) => ({
+                        name: title,
+                        value: id
+                    }));
+
+                    inquirer.prompt({
+                        name: "roleId",
+                        type: "list",
+                        message: "What's the employee's role?",
+                        choices: roleChoices
+                    })
+                        .then(res => {
+                            let roleId = res.roleId;
+
+                            db.allEmployees()
+                                .then(([rows]) => {
+                                    let employees = rows;
+                                    const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+                                        name: `${first_name} ${last_name}`,
+                                        value: id
+                                    }));
+
+                                    managerChoices.unshift({ name: "None", value: null });
+
+                                    inquirer.prompt({
+                                        name: "managerId",
+                                        type: "list",
+                                        message: "Who is the employee's manager?",
+                                        choices: managerChoices
+                                    })
+                                        .then(res => {
+                                            let employee = {
+                                                manager_id: res.managerId,
+                                                role_id: roleId,
+                                                first_name: firstName,
+                                                last_name: lastName
+                                            }
+
+                                            db.addEmployee(employee);
+                                        })
+                                        .then(() => console.log(
+                                            `${firstName} ${lastName} is added`
+                                        ))
+                                        .then(() => startSearch())
+                                })
+                        })
+                })
+        })
+}
