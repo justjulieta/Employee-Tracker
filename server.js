@@ -10,7 +10,7 @@ function startSearch() {
     inquirer.prompt([
         {
             type: "list",
-            message: "Choose an option below",
+            message: "Please choose an option below",
             name: "choice",
             choices: [
                 {
@@ -27,19 +27,19 @@ function startSearch() {
                 },
 
                 {
-                    name: "Department Add",
+                    name: "Add Department",
                     value: "ADD_DEPARTMENT"
                 },
                 {
-                    name: "Role Add",
+                    name: "Add Role",
                     value: "ADD_ROLE"
                 },
                 {
-                    name: "Employee Add",
+                    name: "Add Employee",
                     value: "ADD_EMPLOYEE"
                 },
                 {
-                    name: "Employee Update",
+                    name: "Update Employee Role",
                     value: "UPDATE_EMPLOYEE_ROLE"
                 },
                 {
@@ -229,3 +229,52 @@ function createEmployee() {
                 })
         })
 }
+
+function updateEmployeeRole() {
+    db.allEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+
+            inquirer.prompt([
+                {
+                    name: "employeeId",
+                    type: "list",
+                    message: "Which employee is this?",
+                    choices: employeeChoices
+                }
+            ])
+                .then(res => {
+                    let employeeId = res.employeeId;
+                    db.allRoles()
+                        .then(([rows]) => {
+                            let roles = rows;
+                            const roleChoices = roles.map(({ id, title }) => ({
+                                name: title,
+                                value: id
+                            }));
+
+                            inquirer.prompt([
+                                {
+                                    name: "roleId",
+                                    type: "list",
+                                    message: "What's this new Role Name?",
+                                    choices: roleChoices
+                                }
+                            ])
+                                .then(res => db.updateEmployeeRole(employeeId, res.roleId))
+                                .then(() => console.log("role is updated"))
+                                .then(() => startSearch())
+                        });
+                });
+        })
+}
+
+function quit() {
+    process.exit();
+}
+
+init();
