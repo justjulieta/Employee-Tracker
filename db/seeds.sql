@@ -1,4 +1,4 @@
-USE employee_db;
+USE employees;
 
 INSERT INTO department (department_name)
 VALUES ('Sales'), 
