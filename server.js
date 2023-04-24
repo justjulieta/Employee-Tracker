@@ -87,12 +87,7 @@ function startSearch() {
             default:
                 quit();
         }
-    }
-    )
-    .catch(error => {
-        console.error(error);
-        process.exit(1);
-      });
+    });
 }
 
 function viewEmployees() {
@@ -287,5 +282,3 @@ function updateEmployeeRole() {
 function quit() {
     process.exit();
 }
-
-init();
