@@ -1,20 +1,6 @@
 const inquirer = require('inquirer');
 const db = require("./db");
 require("console.table");
-require('dotenv').config();
-
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-});
-
-db.connect((err) => {
-    if (err) throw err
-    console.log(`Connected to employees_db database.`);
-    startPrompt()
-});
 
 
 function startSearch() {
