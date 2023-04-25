@@ -58,13 +58,13 @@ function startSearch() {
                 viewEmployees();
                 break;
             case "ADD_DEPARTMENT":
-                createDepartment();
+                addDepartment();
                 break;
             case "ADD_ROLE":
-                createRole();
+                addRole();
                 break;
             case "ADD_EMPLOYEE":
-                createEmployee();
+                addEmployee();
                 break;
             case "UPDATE_EMPLOYEE_ROLE":
                 updateEmployeeRole();
@@ -105,7 +105,7 @@ function viewDepartments() {
         .then(() => startSearch());
 }
 
-function createRole() {
+function addRole() {
     db.allDepartments()
         .then(([rows]) => {
             let departments = rows;
@@ -138,7 +138,7 @@ function createRole() {
      })
 }
 
-function createDepartment() {
+function addDepartment() {
     inquirer.prompt([
         {
             name: "name",
@@ -153,7 +153,7 @@ function createDepartment() {
         })
 }
 
-function createEmployee() {
+function addEmployee() {
     inquirer.prompt([
         {
             name: "first_name",
