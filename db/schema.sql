@@ -27,3 +27,12 @@ CREATE TABLE employee (
     FOREIGN KEY (manager_id) 
     REFERENCES employee (id)   
 );
+
+UPDATE employee
+SET manager_id = 1 WHERE id = 2;
+UPDATE employee
+SET manager_id = 3  WHERE id = 4;
+UPDATE employee
+SET manager_id = 5  WHERE id = 6;
+UPDATE employee
+SET manager_id = 7  WHERE id = 8;
