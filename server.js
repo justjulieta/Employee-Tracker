@@ -1,15 +1,6 @@
 const inquirer = require('inquirer');
-const db = require("./db");
-require("console.table");
-require('dotenv').config();
-
-
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-});
+const db = require('./db');
+require('console.table');
 
 function startSearch() {
     inquirer.prompt([
@@ -276,3 +267,5 @@ function updateEmployeeRole() {
 function quit() {
     process.exit();
 }
+
+startApp();
