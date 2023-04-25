@@ -129,7 +129,6 @@ function addRole() {
 }
 
 function viewDepartments() {
-    // query database
     db.query(`SELECT * FROM department`, (err, data) => {
         if (err) throw err;
         console.table(data)
@@ -137,9 +136,7 @@ function viewDepartments() {
     })
 }
 
-// view all roles
 function viewRoles() {
-    // query database
     db.query(`SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department ON role.department_id = department.id`, (err, data) => {
         if (err) throw err;
         console.table(data);
@@ -147,9 +144,7 @@ function viewRoles() {
     });
 }
 
-// view all employees
 function viewEmployees() {
-    // query database
     db.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name as department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) as manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id`, (err, data) => {
         if (err) throw err
         console.table(data)
@@ -157,9 +152,7 @@ function viewEmployees() {
     })
 }
 
-// add department
 function addDepartment() {
-    // query database
     db.query(`SELECT MAX(id) as max_id FROM department`, (err, data) => {
         if (err) throw err;
         const maxId = data[0].max_id;
@@ -168,7 +161,6 @@ function addDepartment() {
             name: "name",
             message: "What is the name of the department?"
         }]).then(response => {
-            // query database
             db.query(`INSERT INTO department (id, name) VALUES (${maxId + 1}, '${response.name}')`, (err) => {
                 if (err) throw err;
                 console.log(`The ${response.name}department has been added.`);
@@ -178,13 +170,10 @@ function addDepartment() {
     });
 }
 
-// add role
 function addRole() {
-    // query database
     db.query(`SELECT id, name FROM department`, (err, data) => {
         if (err) throw err
         console.table(data);
-        // query database
         db.query(`SELECT MAX(id) as max_id FROM role`, (err, data) => {
             if (err) throw err
             const nextId = data[0].max_id + 1;
@@ -205,7 +194,6 @@ function addRole() {
                     message: "What is the ID of the department for the role?"
                 }
             ]).then(response => {
-                // query database
                 db.query(`SELECT * FROM department WHERE id = ${response.department_id}`, (err, data) => {
                     if (err) throw err
                     if (data.length === 0) {
@@ -213,7 +201,6 @@ function addRole() {
                         return addRole();
                     }
                 });
-                // query database
                 db.query(`INSERT INTO role (id, title, salary, department_id) VALUES (${nextId}, '${response.title}', ${response.salary}, ${response.department_id})`, (err) => {
                     if (err) throw err
                     console.log(`The ${response.title} role has been added with a salary of $${response.salary}.`)
@@ -224,17 +211,13 @@ function addRole() {
     });
 }
 
-// add employee
 function addEmployee() {
-    // query database
     db.query(`SELECT id, title FROM role`, (err, data) => {
         if (err) throw err
         console.table(data)
-        // query database
         db.query(`SELECT MAX(id) as max_id FROM employee`, (err, data) => {
             if (err) throw err
             const nextId = data[0].max_id + 1;
-            // query database
             db.query(`SELECT id, concat(first_name,' ',last_name) as name FROM employee`, (err, data) => {
                 if (err) throw err
                 console.table(data)
@@ -258,7 +241,6 @@ function addEmployee() {
                     name: "manager_id",
                     message: "What is the employee's manager's ID?"
                 }]).then(response => {
-                    // query database
                     db.query(`SELECT * FROM role WHERE id = ${response.role_id}`, (err, data) => {
                         if (err) throw err
                         if (data.length === 0) {
@@ -267,7 +249,6 @@ function addEmployee() {
                         }
                     })
                     if (response.manager_id && response.manager_id.length > 0) {
-                        // query database
                         db.query(`SELECT * FROM employee WHERE id = ${response.manager_id}`, (err, data) => {
                             if (err) throw err
                             if (data.length === 0) {
@@ -275,14 +256,12 @@ function addEmployee() {
                                 return addEmployee();
                             }
                         })
-                        // query database
                         db.query(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (${nextId},'${response.first_name}', '${response.last_name}', ${response.role_id}, ${response.manager_id})`, (err, data) => {
                             if (err) throw err
                             console.log("The employee has been added to the database.")
                             startPrompt();
                         })
                     } else {
-                        // query database
                         db.query(`INSERT INTO employee (id, first_name, last_name, role_id) VALUES (${nextId},'${response.first_name}', '${response.last_name}', ${response.role_id})`, (err, data) => {
                             if (err) throw err
                             console.log("The employee has been added to the database.")
@@ -295,9 +274,7 @@ function addEmployee() {
     })
 }
 
-// update employee role
 function updateEmployeeRole() {
-    // query database
     db.query(`SELECT employee.id, CONCAT(employee.first_name, ' ', employee.last_name) as name, role.title as current_role FROM employee LEFT JOIN role ON employee.role_id = role.id`, (err, data) => {
         if (err) throw err
         console.table(data)
@@ -316,7 +293,6 @@ function updateEmployeeRole() {
             name: "new_manager_id",
             message: "What is the employee's new manager's ID?"
         }]).then(response => {
-            // query database
             db.query(`SELECT * FROM role WHERE id = ${response.newRoleId}`, (err, data) => {
                 if (err) throw err
                 if (data.length === 0) {
@@ -324,7 +300,6 @@ function updateEmployeeRole() {
                     return updateEmployeeRole();
                 }
             })
-            // query database
             db.query(`UPDATE employee SET role_id = ${response.newRoleId}, manager_id = ${response.newManagerId} WHERE id = ${response.employeeId}`, (err, data) => {
                 if (err) throw err
                 console.log("Employee's role and manager have been updated.")
@@ -334,7 +309,6 @@ function updateEmployeeRole() {
     })
 }
 
-// quit application
 function quit() {
     db.end(function (err) {
         if (err) throw err;
